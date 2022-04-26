@@ -46,35 +46,35 @@ public partial class Term
     /// <summary>
     /// Moves cursor to position [{0}, {1}]
     /// </summary>
-    public const string moveXY = "\x1b[{0};{1}H";
+    public const string move = "\x1b[{0};{1}H";
     /// <summary>
     /// Moves cursor {0} lines up
     /// </summary>
-    public const string upX = "\x1b[{0}A";
+    public const string up = "\x1b[{0}A";
     /// <summary>
     /// Moves cursor {0} lines down
     /// </summary>
-    public const string downX = "\x1b[{0}B";
+    public const string down = "\x1b[{0}B";
     /// <summary>
     /// Moves cursor {0} columns right
     /// </summary>
-    public const string rightX = "\x1b[{0}C";
+    public const string right = "\x1b[{0}C";
     /// <summary>
     /// Moves cursor {0} columns left
     /// </summary>
-    public const string leftX = "\x1b[{0}D";
+    public const string left = "\x1b[{0}D";
     /// <summary>
     /// Moves cursor to beginning of next line {0} lines down
     /// </summary>
-    public const string downStartX = "\x1b[{0}E";
+    public const string downStart = "\x1b[{0}E";
     /// <summary>
     /// Moves cursor to beginning of previous line {0} lines up
     /// </summary>
-    public const string upStartX = "\x1b[{0}F";
+    public const string upStart = "\x1b[{0}F";
     /// <summary>
     /// Moves cursor to column {0}
     /// </summary>
-    public const string columnX = "\x1b[{0}G";
+    public const string column = "\x1b[{0}G";
     /// <summary>
     /// Requests cursor position (reported as "\x1b[{0};{1}R")
     /// </summary>
@@ -350,20 +350,20 @@ public partial class Term
     /// <summary>
     /// Sets the foreground color bysed on id {0} in range 0 - 255
     /// </summary>
-    public const string FgColorX = "\x1b[38;5;{0}m";
+    public const string fgColor = "\x1b[38;5;{0}m";
     /// <summary>
     /// Sets the background color bysed on id {0} in range 0 - 255
     /// </summary>
-    public const string BgColorX = "\x1b[48;5;{0}m";
+    public const string bgColor = "\x1b[48;5;{0}m";
 
     /// <summary>
     /// Sets the foreground color with standard RGB [{0}, {1}, {2}]
     /// </summary>
-    public const string FgColorRGB = "\x1b[38;2;{0};{1};{2}m";
+    public const string fgRGB = "\x1b[38;2;{0};{1};{2}m";
     /// <summary>
     /// Sets the background color with standard RGB [{0}, {1}, {2}]
     /// </summary>
-    public const string BgColorRGB = "\x1b[48;2;{0};{1};{2}m";
+    public const string bgRGB = "\x1b[48;2;{0};{1};{2}m";
 
     /// <summary>
     /// Hides the cursor

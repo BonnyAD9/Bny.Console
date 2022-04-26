@@ -1,9 +1,8 @@
 ﻿using Bny.Console;
 
-Console.Write("\x1b[?25ltohle\x1b[33m je test");
-Console.Write(Term.altBufferOn);
-Console.ReadLine();
-Console.WriteLine("naodisuhf");
-Console.Write(Term.altBufferOff);
-//Console.Write(Term.up1 + Term.leftX + Term.eraseLineFromCursor, 3);
-while (true) ;
+for (int i = 0; i < 255; i += 8)
+{
+    for (int j = 0; j < 255; j += 4)
+        Term.Form(Term.bgRGB, i, 0, j, ' ');
+    Term.FormLine(Term.reset);
+}
