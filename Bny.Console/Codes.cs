@@ -359,11 +359,11 @@ public partial class Term
     /// <summary>
     /// Sets the foreground color with standard RGB [{0}, {1}, {2}]
     /// </summary>
-    public const string fgRGB = "\x1b[38;2;{0};{1};{2}m";
+    public const string fg = "\x1b[38;2;{0};{1};{2}m";
     /// <summary>
     /// Sets the background color with standard RGB [{0}, {1}, {2}]
     /// </summary>
-    public const string bgRGB = "\x1b[48;2;{0};{1};{2}m";
+    public const string bg = "\x1b[48;2;{0};{1};{2}m";
 
     /// <summary>
     /// Hides the cursor

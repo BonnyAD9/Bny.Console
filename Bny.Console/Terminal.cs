@@ -96,15 +96,15 @@ public partial class Term
                             throw new ArgumentException("Invalid number of arguments");
                         sb.Append(string.Format(bgColor, output[++i]));
                         break;
-                    case fgRGB:
+                    case fg:
                         if (i + 3 >= output.Length)
                             throw new ArgumentException("Invalid number of arguments");
-                        sb.Append(string.Format(fgRGB, output[++i], output[++i], output[++i]));
+                        sb.Append(string.Format(fg, output[++i], output[++i], output[++i]));
                         break;
-                    case bgRGB:
+                    case bg:
                         if (i + 3 >= output.Length)
                             throw new ArgumentException("Invalid number of arguments");
-                        sb.Append(string.Format(bgRGB, output[++i], output[++i], output[++i]));
+                        sb.Append(string.Format(bg, output[++i], output[++i], output[++i]));
                         break;
                     default:
                         sb.Append(s);
