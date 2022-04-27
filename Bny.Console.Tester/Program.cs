@@ -1,8 +1,17 @@
 ﻿using Bny.Console;
+using System.Text;
 
-for (int i = 0; i < 255; i += 8)
-{
-    for (int j = 0; j < 255; j += 4)
-        Term.Form(Term.bg, i, 0, j, ' ');
-    Term.FormLine(Term.reset);
-}
+Console.OutputEncoding = Encoding.UTF8;
+
+string[] str = new string[] {
+    @"  ______   ______     ______     ______  ",
+    @" /\__  _\ /\  ___\   /\  ___\   /\__  _\ ",
+    @" \/_/\ \/ \ \  __\   \ \___  \  \/_/\ \/ ",
+    @"    \ \_\  \ \_____\  \/\_____\    \ \_\ ",
+    @"     \/_/   \/_____/   \/_____/     \/_/ ",
+};
+
+Term.FormAt(str.AsSpan(), 40, 12, i => Term.Prepare(Term.fg, 230 - i * 7, 55, 150 + i * 15));
+Term.Form(Term.hideCursor);
+Console.ReadLine();
+Term.ResetAll();

@@ -2,6 +2,7 @@
 
 public partial class Term
 {
+    //===// Single char codes
     /// <summary>
     /// Terminal bell
     /// </summary>
@@ -39,6 +40,7 @@ public partial class Term
     /// </summary>
     public const char delete = '\x7f';
 
+    //===// Cursor
     /// <summary>
     /// Moves cursor to position [0, 0]
     /// </summary>
@@ -46,7 +48,7 @@ public partial class Term
     /// <summary>
     /// Moves cursor to position [{0}, {1}]
     /// </summary>
-    public const string move = "\x1b[{0};{1}H";
+    public const string move = "\x1b[{1};{0}H";
     /// <summary>
     /// Moves cursor {0} lines up
     /// </summary>
@@ -99,6 +101,8 @@ public partial class Term
     /// Restores cursor position (SCO)
     /// </summary>
     public const string restoreSCO = "\x1b[u";
+
+    //===// Erase
     /// <summary>
     /// Erase from cursor to the end of the screen
     /// </summary>
@@ -128,6 +132,7 @@ public partial class Term
     /// </summary>
     public const string eraseLine = "\x1b[2K";
 
+    //===// Font style
     /// <summary>
     /// Bold/bright mode
     /// </summary>
@@ -169,6 +174,7 @@ public partial class Term
     /// </summary>
     public const string overline = "\x1b[53m";
 
+    //===// Font style resets
     /// <summary>
     /// Resets all modes and color
     /// </summary>
@@ -206,6 +212,7 @@ public partial class Term
     /// </summary>
     public const string resetOverline = "\x1b[29m";
 
+    //===// Color resets
     /// <summary>
     /// Sets the foreground color to the default color
     /// </summary>
@@ -215,6 +222,7 @@ public partial class Term
     /// </summary>
     public const string defaultBg = "\x1b[49m";
 
+    //===// Colors
     /// <summary>
     /// Sets foreground color to black
     /// </summary>
@@ -347,6 +355,7 @@ public partial class Term
     /// </summary>
     public const string brightWhiteBg = "\x1b[107m";
 
+    //===// Color codes
     /// <summary>
     /// Sets the foreground color bysed on id {0} in range 0 - 255
     /// </summary>
@@ -356,6 +365,7 @@ public partial class Term
     /// </summary>
     public const string bgColor = "\x1b[48;5;{0}m";
 
+    //===// Truecolor
     /// <summary>
     /// Sets the foreground color with standard RGB [{0}, {1}, {2}]
     /// </summary>
@@ -365,6 +375,7 @@ public partial class Term
     /// </summary>
     public const string bg = "\x1b[48;2;{0};{1};{2}m";
 
+    //===// Unofficial codes
     /// <summary>
     /// Hides the cursor
     /// </summary>

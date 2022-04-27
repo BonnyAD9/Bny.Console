@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Con = System.Console;
 
 namespace Bny.Console;
@@ -116,4 +112,95 @@ public partial class Term
         }
         return sb;
     }
+
+    /// <summary>
+    /// Moves cursor to the given position
+    /// </summary>
+    /// <param name="x">left-right coordinate of the cursor</param>
+    /// <param name="y">top-bottom coordinate of the cursor</param>
+    public static void Move(int x, int y) => Con.Write(move, x, y);
+
+    /// <summary>
+    /// Prepares move code
+    /// </summary>
+    /// <param name="x">left-right coordinate of the cursor</param>
+    /// <param name="y">top-bottom coordinate of the cursor</param>
+    /// <returns>Code that will move the cursor to the coordinates</returns>
+    public static string PrepareMove(int x, int y) => string.Format(move, x, y);
+
+    /// <summary>
+    /// Prints the given block of text at the given coordinates
+    /// </summary>
+    /// <param name="output">Text to be written</param>
+    /// <param name="x">left-right coordinate of the cursor</param>
+    /// <param name="y">top-bottom coordinate of the cursor</param>
+    public static void FormAt(ReadOnlySpan<string> output, int x, int y) => Con.Write(PrepareAt(output, x, y));
+
+    /// <summary>
+    /// Prepares the given block of text at the given coordinates
+    /// </summary>
+    /// <param name="output">Text to be written</param>
+    /// <param name="x">left-right coordinate of the cursor</param>
+    /// <param name="y">top-bottom coordinate of the cursor</param>
+    /// <returns>string with the prepared text</returns>
+    public static string PrepareAt(ReadOnlySpan<string> output, int x, int y) => PrepareAtSB(output, x, y).ToString();
+
+    /// <summary>
+    /// Prepares the given block of text at the given coordinates
+    /// </summary>
+    /// <param name="output">Text to be written</param>
+    /// <param name="x">left-right coordinate of the cursor</param>
+    /// <param name="y">top-bottom coordinate of the cursor</param>
+    /// <returns>StringBuilder with the prepared text</returns>
+    public static StringBuilder PrepareAtSB(ReadOnlySpan<string> output, int x, int y)
+    {
+        StringBuilder sb = new();
+        for (int i = 0; i < output.Length; i++)
+        {
+            sb.Append(PrepareMove(x, i + y));
+            sb.Append(output[i]);
+        }
+        return sb;
+    }
+
+    /// <summary>
+    /// Prints the given block of text at the given coordinates with style for each line
+    /// </summary>
+    /// <param name="output">Text to be written</param>
+    /// <param name="x">left-right coordinate of the cursor</param>
+    /// <param name="y">top-bottom coordinate of the cursor</param>
+    /// <param name="style">returns style for the given line</param>
+    public static void FormAt(ReadOnlySpan<string> output, int x, int y, Func<int, string> style) => Con.Write(PrepareAt(output, x, y, style).ToString());
+
+    /// <summary>
+    /// Prepares the given block of text at the given coordinates with style for each line
+    /// </summary>
+    /// <param name="output">Text to be written</param>
+    /// <param name="x">left-right coordinate of the cursor</param>
+    /// <param name="y">top-bottom coordinate of the cursor</param>
+    /// <param name="style">returns style for the given line</param>
+    /// <returns>string with the prepared text</returns>
+    public static string PrepareAt(ReadOnlySpan<string> output, int x, int y, Func<int, string> style) => PrepareAtSB(output, x, y, style).ToString();
+
+    /// <summary>
+    /// Prepares the given block of text at the given coordinates with style for each line
+    /// </summary>
+    /// <param name="output">Text to be written</param>
+    /// <param name="x">left-right coordinate of the cursor</param>
+    /// <param name="y">top-bottom coordinate of the cursor</param>
+    /// <param name="style">returns style for the given line</param>
+    /// <returns>StringBuilder with the prepared text</returns>
+    public static StringBuilder PrepareAtSB(ReadOnlySpan<string> output, int x, int y, Func<int, string> style)
+    {
+        StringBuilder sb = new();
+        for (int i = 0; i < output.Length; i++)
+        {
+            sb.Append(PrepareMove(x, i + y));
+            sb.Append(style(i));
+            sb.Append(output[i]);
+        }
+        return sb;
+    }
+
+    public static void ResetAll() => Form(showCursor, reset);
 }
