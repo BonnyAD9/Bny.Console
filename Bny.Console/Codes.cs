@@ -400,4 +400,27 @@ public partial class Term
     /// Disables alternative buffer (doesn't work in Windows Terminal)
     /// </summary>
     public const string altBufferOff = "\x1b[?47l";
+
+    /// <summary>
+    /// Enables line wrapping
+    /// </summary>
+    public const string enableWrapping = "\x1b[7h";
+    /// <summary>
+    /// Disables line wrapping
+    /// </summary>
+    public const string disableWrapping = "\x1b[7l";
+
+    //===// Special cases
+    /// <summary>
+    /// Moves cursor 1 line down
+    /// </summary>
+    public const string down1 = "\x1b[1B";
+    /// <summary>
+    /// Moves cursor 1 column right
+    /// </summary>
+    public const string right1 = "\x1b[1C";
+    /// <summary>
+    /// Moves cursor 1 column left
+    /// </summary>
+    public const string left1 = "\x1b[1D";
 }
