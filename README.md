@@ -7,7 +7,7 @@ Improves working with console using ANSI escape codes
 This example shows printing colorful ascii art text into console.
 
 #### Code
-```[C#]
+```C#
 // import
 using Bny.Console;
 
@@ -39,7 +39,7 @@ Output is shown in windows terminal before the enter was pressed
 This example shows how to read secret text from console limited by length
 
 #### Code
-```[C#]
+```C#
 using Bny.Console;
 
 // Read from console
