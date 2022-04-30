@@ -1,11 +1,13 @@
 # Bny.Console
 Improves working with console using ANSI escape codes
 
-## Example
+## Examples
+
+### Printing
 This example shows printing colorful ascii art text into console.
 
-### Code
-```[C#]
+#### Code
+```C#
 // import
 using Bny.Console;
 
@@ -29,6 +31,31 @@ Console.ReadLine();
 Term.ResetAll();
 ```
 
-### Output
+#### Output
 ![image](https://user-images.githubusercontent.com/46282097/165509389-6fe02667-4557-473e-958c-d78c8cb75ced.png)
 Output is shown in windows terminal before the enter was pressed
+
+### Reading
+This example shows how to read secret text from console limited by length
+
+#### Code
+```C#
+using Bny.Console;
+
+// Read from console
+// map maps the printed characters,
+// if you don't want to print any characters, you can use 'intercept: true'
+// min and max speicies the minimal and maximal length of readed input
+// pressing enter before the given limit won't do anything
+// characters after the 64 are ignored and not printed, but you can still edit what you entered
+string s = Term.Read(map: _ => '*', min: 8, max: 64);
+// this will write newline before the given string
+// Term.Read doesn't jump to the next line
+Term.LineWrite(s);
+```
+
+#### Output
+```
+****************************************************************
+if this was shorter than 8 characters, pressing enter wouldn't w
+```
