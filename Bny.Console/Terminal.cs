@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Drawing;
+using System.Text;
 using Con = System.Console;
 
 namespace Bny.Console;
@@ -574,4 +575,218 @@ public partial class Term
         Con.WriteLine();
         Con.Write(str);
     }
+
+    /// <summary>
+    /// Plays the bell
+    /// </summary>
+    public static void Bell() => Con.Write(bell);
+
+    /// <summary>
+    /// Moves the cursor to the start of the line
+    /// </summary>
+    public static void Start() => Con.Write(carriageReturn);
+
+    /// <summary>
+    /// Moves the cursor to the end of the line
+    /// </summary>
+    public static void End() => Con.Write(end);
+
+    /// <summary>
+    /// Deletes the character under cursor
+    /// </summary>
+    public static void Delete() => Con.Write(delete);
+
+    /// <summary>
+    /// Sets the cursor position to [0, 0]
+    /// </summary>
+    public static void Home() => Con.Write(home);
+
+    /// <summary>
+    /// Moves the cursor x lines up
+    /// </summary>
+    /// <param name="x">How many lines to move up</param>
+    public static void Up(int x) => Con.Write(up, x);
+
+    /// <summary>
+    /// Moves the cursor one line up
+    /// </summary>
+    public static void Up() => Con.Write(up1);
+
+    /// <summary>
+    /// Moves the cursor x lines down
+    /// </summary>
+    /// <param name="x"></param>
+    public static void Down(int x) => Con.Write(down, x);
+
+    /// <summary>
+    /// Moves the cursor one line down
+    /// </summary>
+    public static void Down() => Con.Write(down1);
+
+    /// <summary>
+    /// Moves the cursor x characters left
+    /// </summary>
+    /// <param name="x">Number of characters to move</param>
+    public static void Left(int x) => Con.Write(left, x);
+
+    /// <summary>
+    /// Moves the cursor 1 character left
+    /// </summary>
+    public static void Left() => Con.Write(left1);
+
+    /// <summary>
+    /// Moves the cursor x characters right
+    /// </summary>
+    /// <param name="x">Number of characters to move</param>
+    public static void Right(int x) => Con.Write(right, x);
+
+    /// <summary>
+    /// Moves the cursor 1 character right
+    /// </summary>
+    public static void Right() => Con.Write(right1);
+
+    /// <summary>
+    /// Moves cursor to the beggining of next line x lines down (0 is next line)
+    /// </summary>
+    /// <param name="x">how many lines down to move</param>
+    public static void NextLine(int x) => Con.Write(downStart, x);
+
+    /// <summary>
+    /// Moves cursor to the beggining of the next line
+    /// </summary>
+    public static void NextLine() => Con.Write(nextLine);
+
+    /// <summary>
+    /// Moves cursor to the beggining of the previous line x lines up
+    /// </summary>
+    /// <param name="x">how many lines up to move</param>
+    public static void PrevLine(int x) => Con.Write(upStart, x);
+
+    /// <summary>
+    /// Moves cursor to the beggining of the previous line
+    /// </summary>
+    public static void PrevLine() => Con.Write(prevLine);
+
+    /// <summary>
+    /// Moves cursor to the end of the next line x lines down
+    /// </summary>
+    /// <param name="x">how many lines to move</param>
+    public static void NextEnd(int x) => Con.Write(downEnd, x);
+
+    /// <summary>
+    /// Moves cursor to the end of the next line
+    /// </summary>
+    public static void NextEnd() => Con.Write(nextEnd);
+
+    /// <summary>
+    /// Moves cursor to the end of the previous line x lines up
+    /// </summary>
+    /// <param name="x">how many lines to move</param>
+    public static void PrevEnd(int x) => Con.Write(upEnd, x);
+
+    /// <summary>
+    /// Moves cursor to the end of the previous line
+    /// </summary>
+    public static void PrevEnd() => Con.Write(prevEnd);
+
+    /// <summary>
+    /// Moves cursor to the specified column
+    /// </summary>
+    /// <param name="x">column to move to</param>
+    public static void Column(int x) => Con.Write(column, x);
+
+    /// <summary>
+    /// Saves the cursor position
+    /// </summary>
+    public static void Save() => Con.Write(save);
+
+    /// <summary>
+    /// Restores the cursor position
+    /// </summary>
+    public static void Restore() => Con.Write(restore);
+
+    /// <summary>
+    /// Erase from cursor to the end of the screen
+    /// </summary>
+    public static void EraseFromCursor() => Con.Write(eraseFromCursor);
+
+    /// <summary>
+    /// Erase from the start of the screen to the cursor
+    /// </summary>
+    public static void EraseToCursor() => Con.Write(eraseToCursor);
+
+    /// <summary>
+    /// Erase the entire screen
+    /// </summary>
+    public static void Erase() => Con.Write(erase);
+
+    /// <summary>
+    /// Erase line from cursor to the end of the line
+    /// </summary>
+    public static void EraseLineFromCursor() => Con.Write(eraseLineFromCursor);
+
+    /// <summary>
+    /// Erase line from the start to the cursor
+    /// </summary>
+    public static void EraseLineToCursor() => Con.Write(eraseLineToCursor);
+
+    /// <summary>
+    /// Erase the entire line
+    /// </summary>
+    public static void EraseLine() => Con.Write(eraseLine);
+
+    /// <summary>
+    /// Resets the color of the text
+    /// </summary>
+    public static void ResetColor() => Con.Write(defaultBg + defaultFg);
+
+    /// <summary>
+    /// Sets the foreground to the color specified by the color code
+    /// </summary>
+    /// <param name="colorCode">code of the color</param>
+    public static void FgColor(byte colorCode) => Form(fgColor, colorCode);
+
+    /// <summary>
+    /// Sets the foreground color
+    /// </summary>
+    /// <param name="r">Red component</param>
+    /// <param name="g">Green component</param>
+    /// <param name="b">Blue component</param>
+    public static void FgColor(byte r, byte g, byte b) => Form(fg, r, g, b);
+
+    /// <summary>
+    /// Sets the foreground color
+    /// </summary>
+    /// <param name="color">the foreground color</param>
+    public static void FgColor(Color color) => Form(fg, color.R, color.G, color.B);
+
+    /// <summary>
+    /// Sets the background to the color specified by the color code
+    /// </summary>
+    /// <param name="colorCode">code of the color</param>
+    public static void BgColor(byte colorCode) => Form(bgColor, colorCode);
+
+    /// <summary>
+    /// Sets the background color
+    /// </summary>
+    /// <param name="r">Red component</param>
+    /// <param name="g">Green component</param>
+    /// <param name="b">Blue component</param>
+    public static void BgColor(byte r, byte g, byte b) => Form(bg, r, g, b);
+
+    /// <summary>
+    /// Sets the background color
+    /// </summary>
+    /// <param name="color">the foreground color</param>
+    public static void BgColor(Color color) => Form(bg, color.R, color.G, color.B);
+
+    /// <summary>
+    /// Hides the cursor
+    /// </summary>
+    public static void HideCursor() => Con.Write(hideCursor);
+
+    /// <summary>
+    /// Shows the cursor
+    /// </summary>
+    public static void ShowCursor() => Con.Write(showCursor);
 }

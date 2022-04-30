@@ -423,4 +423,32 @@ public partial class Term
     /// Moves cursor 1 column left
     /// </summary>
     public const string left1 = "\x1b[1D";
+    /// <summary>
+    /// Moves cursor to the end of the line
+    /// </summary>
+    public const string end = "\x1b[999999C";
+    /// <summary>
+    /// Moves cursor to the beggining of the next line
+    /// </summary>
+    public const string nextLine = "\x1b[E";
+    /// <summary>
+    /// Moves cursor to the beggining of the next line
+    /// </summary>
+    public const string prevLine = "\x1b[F";
+    /// <summary>
+    /// Moves cursor to the end of the next line
+    /// </summary>
+    public const string nextEnd = "\x1b[E\x1b[999999C";
+    /// <summary>
+    /// Moves cursor to the end of the previous line
+    /// </summary>
+    public const string prevEnd = "\x1b[F\x1b[999999C";
+    /// <summary>
+    /// Moves cursor to the end of the nex line {0} lines down
+    /// </summary>
+    public const string downEnd = "\x1b[{0}E\x1b[999999C";
+    /// <summary>
+    /// Moves cursor to the end of the previous line {0} line up
+    /// </summary>
+    public const string upEnd = "\x1b[{0}F\x1b[999999C";
 }
