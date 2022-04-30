@@ -410,19 +410,25 @@ public partial class Term
     /// </summary>
     public const string disableWrapping = "\x1b[7l";
 
+    //===// OSC
+    /// <summary>
+    /// Changes the title to {0}
+    /// </summary>
+    public const string title = "\x1b]0;{0}\x1b\\";
+
     //===// Special cases
     /// <summary>
     /// Moves cursor 1 line down
     /// </summary>
-    public const string down1 = "\x1b[1B";
+    public const string down1 = "\x1b[B";
     /// <summary>
     /// Moves cursor 1 column right
     /// </summary>
-    public const string right1 = "\x1b[1C";
+    public const string right1 = "\x1b[C";
     /// <summary>
     /// Moves cursor 1 column left
     /// </summary>
-    public const string left1 = "\x1b[1D";
+    public const string left1 = "\x1b[D";
     /// <summary>
     /// Moves cursor to the end of the line
     /// </summary>

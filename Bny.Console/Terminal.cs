@@ -105,6 +105,11 @@ public partial class Term
                             throw new ArgumentException("Invalid number of arguments");
                         sb.Append(string.Format(bg, output[++i], output[++i], output[++i]));
                         break;
+                    case title:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(title, output[++i]));
+                        break;
                     default:
                         sb.Append(s);
                         break;
@@ -337,7 +342,8 @@ public partial class Term
         StringBuilder sb = new(edit);
         if (pos < 0 || pos > edit.Length)
             throw new ArgumentOutOfRangeException(nameof(pos));
-        Form(edit, left, edit.Length - pos);
+        if (edit.Length - pos != 0)
+            Form(edit, left, edit.Length - pos);
         map ??= c => c;
 
         bool Intercepted(int i, ConsoleKeyInfo key)
@@ -557,6 +563,44 @@ public partial class Term
         return Read(
             (_, cki, sb) => (sb.Length + 1 < count || IsReadIgnored(cki), !allowEdit && IsReadIgnored(cki)),
             map: map, intercept: intercept, readLast: true, edit: edit, pos: pos);
+    }
+
+    /// <summary>
+    /// Returns the number of characters that would be printed
+    /// </summary>
+    /// <param name="s">string to inspect</param>
+    /// <returns>number of characters shat would be printed</returns>
+    public static int PrintLength(ReadOnlySpan<char> s)
+    {
+        int c = 0;
+        for (int i = 0; i < s.Length; i++)
+        {
+            switch (s[i])
+            {
+                case '\a' or  '\b' or '\f' or '\n' or delete:
+                    break;
+                case escape:
+                    if (i + i >= s.Length)
+                        break;
+                    i++;
+                    switch (s[i])
+                    {
+                        case ']' or 'X' or '^' or '_':
+                            for (; i < s.Length && !(s[i] == '\\' && s[i - 1] == escape); i++) ;
+                            break;
+                        case '[':
+                            for (; i < s.Length && (byte)s[i] is < 0x40 or > 0x7E; i++) ;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    c++;
+                    break;
+            }
+        }
+        return c;
     }
 
     /// <summary>
@@ -789,4 +833,6 @@ public partial class Term
     /// Shows the cursor
     /// </summary>
     public static void ShowCursor() => Con.Write(showCursor);
+
+    public static void Title(string str) => Con.Write(title, str);
 }
