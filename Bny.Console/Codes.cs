@@ -78,6 +78,10 @@ public partial class Term
     /// </summary>
     public const string column = "\x1b[{0}G";
     /// <summary>
+    /// Moves cursor to row {0}
+    /// </summary>
+    public const string row = "\x1b[{0}d";
+    /// <summary>
     /// Requests cursor position (reported as "\x1b[{0};{1}R")
     /// </summary>
     public const string posReq = "\x1b[6n";
@@ -385,6 +389,14 @@ public partial class Term
     /// </summary>
     public const string showCursor = "\x1b[?25h";
     /// <summary>
+    /// Enables cursor blinking
+    /// </summary>
+    public const string enableBlinking = "\x1b[?12h";
+    /// <summary>
+    /// Disables cursor blinking
+    /// </summary>
+    public const string disableBlinking = "\x1b[?12l";
+    /// <summary>
     /// Restores saved screen (doesn't work in Windows Terminal)
     /// </summary>
     public const string restoreScreen = "\x1b[?47l";
@@ -393,28 +405,90 @@ public partial class Term
     /// </summary>
     public const string saveScreen = "\x1b[?47h";
     /// <summary>
-    /// Enables alternative buffer (doesn't work in Windows Terminal)
+    /// Enables alternative buffer
     /// </summary>
-    public const string altBufferOn = "\x1b[?47h";
+    public const string altBufferOn = "\x1b[?1049h";
     /// <summary>
-    /// Disables alternative buffer (doesn't work in Windows Terminal)
+    /// Disables alternative buffer
     /// </summary>
-    public const string altBufferOff = "\x1b[?47l";
+    public const string altBufferOff = "\x1b[?1049l";
 
     /// <summary>
-    /// Enables line wrapping
+    /// Enables line wrapping (doesn't work in windows terminal)
     /// </summary>
     public const string enableWrapping = "\x1b[7h";
     /// <summary>
-    /// Disables line wrapping
+    /// Disables line wrapping (doesn't work in windows terminal)
     /// </summary>
     public const string disableWrapping = "\x1b[7l";
+
+    //===// Viewport positioning
+    /// <summary>
+    /// Scrolls down by {0} lines
+    /// </summary>
+    public const string scrollDown = "\x1b[{0}S";
+    /// <summary>
+    /// Scrolls up by {0} lines
+    /// </summary>
+    public const string scrollUp = "\x1b[{0}T";
+
+    //===// Text modification
+    /// <summary>
+    /// Inserts {0} spaces
+    /// </summary>
+    public const string insert = "\x1b[{0}@";
+    /// <summary>
+    /// Removes {0} characters from the right
+    /// </summary>
+    public const string remove = "\x1b[{0}P";
+    /// <summary>
+    /// Erase {0} characters to the right
+    /// </summary>
+    public const string eraseX = "\x1b[{0}X";
+    /// <summary>
+    /// Insert {0} lines above the cursor
+    /// </summary>
+    public const string insertLine = "\x1b[{0}L";
+    /// <summary>
+    /// Deletes {0} lines from the buffer
+    /// </summary>
+    public const string deleteLine = "\x1b[{0}M";
+
+    //===// Keypad modes
+    public const string enableKeypadApplication = "\x1b=";
+    public const string disablekeypadApplication = "\x1b>";
+    public const string enableCursorKeysApplication = "\x1b[?1h";
+    public const string disableCursorKeysApplication = "\x1b[?1l";
+
+    //===// Query state
+    public const string reqTerminalIdentity = "\x1b[0c";
+
+    //===// Tabs
+    public const string setTabStop = "\x1bH";
+    public const string tabForward = "\x1b[{0}I";
+    public const string tabBackwards = "\x1b[{0}Z";
+    public const string clearTabStop = "\x1b[0g";
+    public const string clearAllTabStops = "\x1b[3g";
+
+    //===// Scrolling margins
+    public const string scrollingMargin = "\x1b[{0};{1}r";
+
+    //===// Window width
+    public const string width132 = "\x1b[?3h";
+    public const string width80 = "\x1b[?3l";
+
+    //===// Reset
+    public const string softReset = "\x1b[!p";
 
     //===// OSC
     /// <summary>
     /// Changes the title to {0}
     /// </summary>
     public const string title = "\x1b]0;{0}\x1b\\";
+    /// <summary>
+    /// Sets the color specified with index by an RGB color [{1}, {2}, {3}]
+    /// </summary>
+    public const string setColor = "\x1b]4;{0};rgb:{1}/{2}/{3}\x1b\\";
 
     //===// Special cases
     /// <summary>

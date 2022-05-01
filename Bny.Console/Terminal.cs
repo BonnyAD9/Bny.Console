@@ -85,6 +85,11 @@ public partial class Term
                             throw new ArgumentException("Invalid number of arguments");
                         sb.Append(string.Format(column, output[++i]));
                         break;
+                    case row:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(row, output[++i]));
+                        break;
                     case fgColor:
                         if (i + 1 >= output.Length)
                             throw new ArgumentException("Invalid number of arguments");
@@ -109,6 +114,49 @@ public partial class Term
                         if (i + 1 >= output.Length)
                             throw new ArgumentException("Invalid number of arguments");
                         sb.Append(string.Format(title, output[++i]));
+                        break;
+                    case scrollDown:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(scrollDown, output[++i]));
+                        break;
+                    case scrollUp:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(scrollUp, output[++i]));
+                        break;
+                    case insert:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        if (output[++i] is string str)
+                            sb.Append(string.Format(insert, str.Length)).Append(str);
+                        else
+                            sb.Append(string.Format(insert, output[i]));
+                        break;
+                    case remove:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(remove, output[++i]));
+                        break;
+                    case eraseX:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(eraseX, output[++i]));
+                        break;
+                    case insertLine:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(insertLine, output[++i]));
+                        break;
+                    case deleteLine:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(deleteLine, output[++i]));
+                        break;
+                    case setColor:
+                        if (i + 4 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(setColor, output[++i], output[++i], output[++i], output[++i]));
                         break;
                     default:
                         sb.Append(s);
@@ -740,6 +788,12 @@ public partial class Term
     public static void Column(int x) => Con.Write(column, x);
 
     /// <summary>
+    /// Moves cursor to the specified row
+    /// </summary>
+    /// <param name="x">tow to move to</param>
+    public static void Row(int x) => Con.Write(row, x);
+
+    /// <summary>
     /// Saves the cursor position
     /// </summary>
     public static void Save() => Con.Write(save);
@@ -834,5 +888,57 @@ public partial class Term
     /// </summary>
     public static void ShowCursor() => Con.Write(showCursor);
 
+    /// <summary>
+    /// Sets the window title
+    /// </summary>
+    /// <param name="str">the new title</param>
     public static void Title(string str) => Con.Write(title, str);
+
+    /// <summary>
+    /// Scrolls up by x lines
+    /// </summary>
+    /// <param name="x">how much to scroll up</param>
+    public static void ScrollUp(int x) => Con.Write(scrollUp, x);
+
+    /// <summary>
+    /// Scrolls down by x lines
+    /// </summary>
+    /// <param name="x">how much to scroll down</param>
+    public static void ScrollDown(int x) => Con.Write(scrollDown, x);
+
+    /// <summary>
+    /// Inserts x characters
+    /// </summary>
+    /// <param name="x">number of characters to insert</param>
+    public static void Insert(int x) => Con.Write(insert, x);
+
+    /// <summary>
+    /// Inserts string
+    /// </summary>
+    /// <param name="str">string to insert</param>
+    public static void Insert(string str) => Form(insert, str);
+
+    /// <summary>
+    /// Removes x characters
+    /// </summary>
+    /// <param name="x">number of characters to remove</param>
+    public static void Remove(int x) => Con.Write(remove, x);
+
+    /// <summary>
+    /// Erases x characters to the right
+    /// </summary>
+    /// <param name="x">number of characters to erase</param>
+    public static void Erase(int x) => Con.Write(eraseX, x);
+
+    /// <summary>
+    /// Inserts x lines
+    /// </summary>
+    /// <param name="x">number of lines to insert</param>
+    public static void InsertLine(int x) => Con.Write(insertLine, x);
+
+    /// <summary>
+    /// Deletes x lines
+    /// </summary>
+    /// <param name="x">number of lines to delete</param>
+    public static void DeleteLine(int x) => Con.Write(deleteLine, x);
 }
