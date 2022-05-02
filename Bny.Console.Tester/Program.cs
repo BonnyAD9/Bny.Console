@@ -1,11 +1,5 @@
 ﻿using Bny.Console;
 
-Term.Title("ahoj");
-Term.Form("alkajsdhfalkjdhf");
-Thread.Sleep(1000);
-Term.Read(max: 0, intercept: true);
-Term.Form("\u001bc");
+Term.Form("helo", Term.left, 2, Term.erase1);
+Term.Column = 1;
 Term.Read(max: 0);
-
-/*string s = Term.Read(map: _ => '*', min: 8, max: 64);
-Term.LineWrite(s);*/

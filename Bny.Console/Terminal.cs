@@ -128,10 +128,18 @@ public partial class Term
                     case insert:
                         if (i + 1 >= output.Length)
                             throw new ArgumentException("Invalid number of arguments");
-                        if (output[++i] is string str)
-                            sb.Append(string.Format(insert, str.Length)).Append(str);
-                        else
-                            sb.Append(string.Format(insert, output[i]));
+                        switch (output[++i])
+                        {
+                            case string str:
+                                sb.Append(string.Format(insert, PrintLength(str))).Append(str);
+                                break;
+                            case char c:
+                                sb.Append(insert1).Append(c);
+                                break;
+                            default:
+                                sb.Append(string.Format(insert, output[i]));
+                                break;
+                        }
                         break;
                     case remove:
                         if (i + 1 >= output.Length)
@@ -259,9 +267,9 @@ public partial class Term
     }
 
     /// <summary>
-    /// Resets font style and cursor visibility
+    /// Soft resets all configuration to defaults
     /// </summary>
-    public static void ResetAll() => Form(showCursor, reset);
+    public static void ResetAll() => Con.Write(softReset);
 
     /// <summary>
     /// Returns the cursor position
@@ -277,7 +285,7 @@ public partial class Term
 
         var str = ReadRaw(true).AsSpan();
         int i = str.IndexOf('\x1b');
-        
+
         if (i == -1)
             throw new InvalidOperationException();
 
@@ -625,19 +633,19 @@ public partial class Term
         {
             switch (s[i])
             {
-                case '\a' or  '\b' or '\f' or '\n' or delete:
+                case '\a' or '\b' or '\f' or '\n' or delete:
                     break;
                 case escape:
-                    if (i + i >= s.Length)
+                    if (i + 1 >= s.Length)
                         break;
                     i++;
                     switch (s[i])
                     {
                         case ']' or 'X' or '^' or '_':
-                            for (; i < s.Length && !(s[i] == '\\' && s[i - 1] == escape); i++) ;
+                            for (i++; i < s.Length && !(s[i] == '\\' && s[i - 1] == escape); i++) ;
                             break;
                         case '[':
-                            for (; i < s.Length && (byte)s[i] is < 0x40 or > 0x7E; i++) ;
+                            for (i++; i < s.Length && (byte)s[i] is < 0x40 or > 0x7E; i++) ;
                             break;
                         default:
                             break;
@@ -784,14 +792,12 @@ public partial class Term
     /// <summary>
     /// Moves cursor to the specified column
     /// </summary>
-    /// <param name="x">column to move to</param>
-    public static void Column(int x) => Con.Write(column, x);
+    public static int Column { set => Con.Write(column, value); }
 
     /// <summary>
     /// Moves cursor to the specified row
     /// </summary>
-    /// <param name="x">tow to move to</param>
-    public static void Row(int x) => Con.Write(row, x);
+    public static int Row { set => Con.Write(row, value); }
 
     /// <summary>
     /// Saves the cursor position
@@ -879,20 +885,14 @@ public partial class Term
     public static void BgColor(Color color) => Form(bg, color.R, color.G, color.B);
 
     /// <summary>
-    /// Hides the cursor
+    /// Shows or hides the cursor
     /// </summary>
-    public static void HideCursor() => Con.Write(hideCursor);
-
-    /// <summary>
-    /// Shows the cursor
-    /// </summary>
-    public static void ShowCursor() => Con.Write(showCursor);
+    public static bool IsCursorVisible { set => Con.Write(value ? showCursor : hideCursor); }
 
     /// <summary>
     /// Sets the window title
     /// </summary>
-    /// <param name="str">the new title</param>
-    public static void Title(string str) => Con.Write(title, str);
+    public static string Title { set => Con.Write(title, value); }
 
     /// <summary>
     /// Scrolls up by x lines
@@ -901,10 +901,20 @@ public partial class Term
     public static void ScrollUp(int x) => Con.Write(scrollUp, x);
 
     /// <summary>
+    /// Scrolls up by 1 line
+    /// </summary>
+    public static void ScrollUp() => Con.Write(scrollUp1);
+
+    /// <summary>
     /// Scrolls down by x lines
     /// </summary>
     /// <param name="x">how much to scroll down</param>
     public static void ScrollDown(int x) => Con.Write(scrollDown, x);
+
+    /// <summary>
+    /// Scrolls down by 1 line
+    /// </summary>
+    public static void ScrollDown() => Con.Write(scrollDown1);
 
     /// <summary>
     /// Inserts x characters
@@ -919,10 +929,26 @@ public partial class Term
     public static void Insert(string str) => Form(insert, str);
 
     /// <summary>
+    /// Inserts 1 character
+    /// </summary>
+    public static void Insert() => Con.Write(insert1);
+
+    /// <summary>
+    /// Inserts one character
+    /// </summary>
+    /// <param name="c">character to insert</param>
+    public static void Insert(char c) => Form(insert, c);
+
+    /// <summary>
     /// Removes x characters
     /// </summary>
     /// <param name="x">number of characters to remove</param>
     public static void Remove(int x) => Con.Write(remove, x);
+
+    /// <summary>
+    /// Removes 1 character
+    /// </summary>
+    public static void Remove() => Con.Write(remove1);
 
     /// <summary>
     /// Erases x characters to the right
@@ -931,14 +957,31 @@ public partial class Term
     public static void Erase(int x) => Con.Write(eraseX, x);
 
     /// <summary>
+    /// Erases one character
+    /// </summary>
+    public static void Erase1() => Con.Write(erase1);
+
+    /// <summary>
     /// Inserts x lines
     /// </summary>
     /// <param name="x">number of lines to insert</param>
     public static void InsertLine(int x) => Con.Write(insertLine, x);
 
     /// <summary>
+    /// Inserts 1 line
+    /// </summary>
+    public static void InsertLine() => Con.Write(insert1Line); 
+
+    /// <summary>
     /// Deletes x lines
     /// </summary>
     /// <param name="x">number of lines to delete</param>
     public static void DeleteLine(int x) => Con.Write(deleteLine, x);
+
+    /// <summary>
+    /// Deletes 1 line
+    /// </summary>
+    public static void DeleteLine() => Con.Write(delete1Line);
+
+    //public static bool KeypadApplication { set => Con.Write(value ? enableKeypadApplication : disablekeypadApplication); }
 }

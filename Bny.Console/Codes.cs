@@ -531,4 +531,32 @@ public partial class Term
     /// Moves cursor to the end of the previous line {0} line up
     /// </summary>
     public const string upEnd = "\x1b[{0}F\x1b[999999C";
+    /// <summary>
+    /// Scrolls up by 1 line
+    /// </summary>
+    public const string scrollDown1 = "\x1b[S";
+    /// <summary>
+    /// Scrolls down by 1 line
+    /// </summary>
+    public const string scrollUp1 = "\x1b[T";
+    /// <summary>
+    /// Inserts one character
+    /// </summary>
+    public const string insert1 = "\x1b[@";
+    /// <summary>
+    /// Removes one character
+    /// </summary>
+    public const string remove1 = "\x1b[P";
+    /// <summary>
+    /// Erases one character
+    /// </summary>
+    public const string erase1 = "\x1b[X";
+    /// <summary>
+    /// Inserts 1 line
+    /// </summary>
+    public const string insert1Line = "\x1b[L";
+    /// <summary>
+    /// Deletes 1 line
+    /// </summary>
+    public const string delete1Line = "\x1b[M";
 }
