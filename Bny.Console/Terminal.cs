@@ -166,6 +166,21 @@ public partial class Term
                             throw new ArgumentException("Invalid number of arguments");
                         sb.Append(string.Format(setColor, output[++i], output[++i], output[++i], output[++i]));
                         break;
+                    case tabForward:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(tabForward, output[++i]));
+                        break;
+                    case tabBackwards:
+                        if (i + 1 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(tabBackwards, output[++i]));
+                        break;
+                    case scrollingMargin:
+                        if (i + 2 >= output.Length)
+                            throw new ArgumentException("Invalid number of arguments");
+                        sb.Append(string.Format(scrollingMargin, output[++i], output[++i]));
+                        break;
                     default:
                         sb.Append(s);
                         break;
@@ -378,12 +393,16 @@ public partial class Term
     /// <param name="predicate">Controls the reading,
     /// First parameter is the index of the readed key,
     /// Second parameter is the currently readed key,
-    /// Third parameter is what was readed so far</param>
+    /// Third parameter is what was readed so far,
+    /// First return value indicates whether to continue reading,
+    /// Second return value indicates whether the current key should be ignored</param>
     /// <param name="map">Maps printed characters</param>
     /// <param name="intercept">if true, nothing will be printed</param>
     /// <param name="readLast">indicates whether the last key chould be added to the result string</param>
     /// <param name="edit">this string will be printed and the user can edit it</param>
     /// <param name="pos">position of the cursor in the edit string</param>
+    /// <param name="prompt">prompt for the user</param>
+    /// <param name="next">what will be written after the text has been readed</param>
     /// <returns>string readed from the console</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when pos is not in the range 0 - edit.Length</exception>
     /// <exception cref="InvalidOperationException">thrown when the terminal doesn't support getting the current cursor position</exception>
@@ -393,8 +412,11 @@ public partial class Term
         bool intercept = false,
         bool readLast = false,
         string edit = "",
-        int pos = 0)
+        int pos = 0,
+        string prompt = "",
+        string next = "\n")
     {
+        Con.Write(prompt);
         StringBuilder sb = new(edit);
         if (pos < 0 || pos > edit.Length)
             throw new ArgumentOutOfRangeException(nameof(pos));
@@ -530,6 +552,7 @@ public partial class Term
 
         ReadSkeleton(intercept ? Intercepted : UnIntercepted, true);
         Con.Write(CharMap(sb, map, pos, sb.Length));
+        Con.Write(next);
         return sb.ToString();
     }
 
@@ -545,6 +568,8 @@ public partial class Term
     /// <param name="max">Maximum characters to read</param>
     /// <param name="allowEdit">Determines whether the already typed text can be edited</param>
     /// <param name="pos">Position of cursor in the edit string</param>
+    /// <param name="prompt">prompt for the user</param>
+    /// <param name="next">what will be written after the text has been readed</param>
     /// <returns>Readed string</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when pos is not in the range 0 - edit.Length</exception>
     /// <exception cref="InvalidOperationException">thrown when the terminal doesn't support getting the current cursor position</exception>
@@ -557,9 +582,11 @@ public partial class Term
         int min = 0,
         int max = int.MaxValue,
         bool allowEdit = true,
-        int pos = 0) => Read(
+        int pos = 0,
+        string prompt = "",
+        string next = "\n") => Read(
             (_, key, sb) => (key.Key != stop || sb.Length < min, (sb.Length >= max && !IsReadIgnored(key)) || (!allowEdit && IsReadIgnored(key))),
-            map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos);
+            map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos, prompt: prompt, next: next);
 
 
     /// <summary>
@@ -574,6 +601,8 @@ public partial class Term
     /// <param name="max">Maximum characters to read</param>
     /// <param name="allowEdit">Determines whether the already typed text can be edited</param>
     /// <param name="pos">Position of cursor in the edit string</param>
+    /// <param name="prompt">prompt for the user</param>
+    /// <param name="next">what will be written after the text has been readed</param>
     /// <returns>Readed string</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when pos is not in the range 0 - edit.Length</exception>
     /// <exception cref="InvalidOperationException">thrown when the terminal doesn't support getting the current cursor position</exception>
@@ -586,9 +615,11 @@ public partial class Term
         int min = 0,
         int max = int.MaxValue,
         bool allowEdit = true,
-        int pos = 0) => Read(
+        int pos = 0,
+        string prompt = "",
+        string next = "\n") => Read(
             (_, key, sb) => (key.KeyChar != stop || sb.Length < min, (sb.Length >= max && !IsReadIgnored(key)) || (!allowEdit && IsReadIgnored(key))),
-            map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos);
+            map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos, prompt: prompt, next: next);
 
     /// <summary>
     /// Reads the given number of characters from the console
@@ -608,7 +639,9 @@ public partial class Term
         bool intercept = false,
         string edit = "",
         bool allowEdit = true,
-        int pos = 0)
+        int pos = 0,
+        string prompt = "",
+        string next = "\n")
     {
         if (count == 0)
         {
@@ -618,7 +651,7 @@ public partial class Term
 
         return Read(
             (_, cki, sb) => (sb.Length + 1 < count || IsReadIgnored(cki), !allowEdit && IsReadIgnored(cki)),
-            map: map, intercept: intercept, readLast: true, edit: edit, pos: pos);
+            map: map, intercept: intercept, readLast: true, edit: edit, pos: pos, prompt: prompt, next: next);
     }
 
     /// <summary>
@@ -983,5 +1016,69 @@ public partial class Term
     /// </summary>
     public static void DeleteLine() => Con.Write(delete1Line);
 
-    //public static bool KeypadApplication { set => Con.Write(value ? enableKeypadApplication : disablekeypadApplication); }
+    /// <summary>
+    /// Sets keypad mode
+    /// </summary>
+    public static bool KeypadApplication { set => Con.Write(value ? enableKeypadApplication : disablekeypadApplication); }
+
+    /// <summary>
+    /// Sets keypad cursor mode
+    /// </summary>
+    public static bool CursorKeysApplication { set => Con.Write(value ? enableCursorKeysApplication : disableCursorKeysApplication); }
+
+    /// <summary>
+    /// Sets tab stop at the current position
+    /// </summary>
+    public static void SetTabStop() => Con.Write(setTabStop);
+
+    /// <summary>
+    /// Sets tab stop at the given column (uses save)
+    /// </summary>
+    /// <param name="x">column of the tab stop</param>
+    public static void SetTabStop(int x) => Form(save, column, x, setTabStop, restore);
+
+    /// <summary>
+    /// Moves to the next tab stop
+    /// </summary>
+    public static void TabForward() => Con.Write(tabForward1);
+
+    /// <summary>
+    /// Moves x tabs forward
+    /// </summary>
+    /// <param name="x">number of tabs to move</param>
+    public static void TabForward(int x) => Con.Write(tabForward, x);
+
+    /// <summary>
+    /// Moves to the previous tab stop
+    /// </summary>
+    public static void TabBackwards() => Con.Write(tabBackwards1);
+
+    /// <summary>
+    /// Moves x tabs backwards
+    /// </summary>
+    /// <param name="x">number of tabs to move backwards</param>
+    public static void TabBackwards(int x) => Con.Write(tabBackwards, x);
+
+    /// <summary>
+    /// Clears tab stop at the current position
+    /// </summary>
+    public static void ClearTabStop() => Con.Write(clearTabStop);
+
+    /// <summary>
+    /// Clears tab stop at the given column (uses save)
+    /// </summary>
+    /// <param name="x">column where to clear the tab stop</param>
+    public static void ClearTabStop(int x) => Form(save, column, x, clearTabStop, restore);
+
+    /// <summary>
+    /// Clears all tab stops
+    /// </summary>
+    public static void ClearAllTabStops() => Con.WriteLine(clearAllTabStops);
+
+    /// <summary>
+    /// Sets the scrolling margins
+    /// </summary>
+    /// <param name="top">margin at the top</param>
+    /// <param name="bottom">margin at the bottom</param>
+    public static void SetScrollingMargin(int top, int bottom) => Con.Write(scrollingMargin, top, bottom);
 }

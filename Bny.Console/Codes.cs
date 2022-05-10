@@ -455,22 +455,52 @@ public partial class Term
     public const string deleteLine = "\x1b[{0}M";
 
     //===// Keypad modes
+    /// <summary>
+    /// Sets keypad to work in application mode
+    /// </summary>
     public const string enableKeypadApplication = "\x1b=";
+    /// <summary>
+    /// Sets keypad to numeric mode
+    /// </summary>
     public const string disablekeypadApplication = "\x1b>";
+    /// <summary>
+    /// Sets keypad to work as cursor keys
+    /// </summary>
     public const string enableCursorKeysApplication = "\x1b[?1h";
+    /// <summary>
+    /// Sets keypad to numeric mode
+    /// </summary>
     public const string disableCursorKeysApplication = "\x1b[?1l";
 
     //===// Query state
     public const string reqTerminalIdentity = "\x1b[0c";
 
     //===// Tabs
+    /// <summary>
+    /// Set tab stop at the current position
+    /// </summary>
     public const string setTabStop = "\x1bH";
+    /// <summary>
+    /// Moves {0} tabs forward
+    /// </summary>
     public const string tabForward = "\x1b[{0}I";
+    /// <summary>
+    /// Moves {0} tabs backwards
+    /// </summary>
     public const string tabBackwards = "\x1b[{0}Z";
+    /// <summary>
+    /// Clears tab stop at the current poition
+    /// </summary>
     public const string clearTabStop = "\x1b[0g";
+    /// <summary>
+    /// Clears all tab stops
+    /// </summary>
     public const string clearAllTabStops = "\x1b[3g";
 
     //===// Scrolling margins
+    /// <summary>
+    /// Sets top margin to {0}, and bottom margin to {1}
+    /// </summary>
     public const string scrollingMargin = "\x1b[{0};{1}r";
 
     //===// Window width
@@ -559,4 +589,12 @@ public partial class Term
     /// Deletes 1 line
     /// </summary>
     public const string delete1Line = "\x1b[M";
+    /// <summary>
+    /// Moves to the next tab stop
+    /// </summary>
+    public const string tabForward1 = "\x1b[I";
+    /// <summary>
+    /// Moves to the previous tab stop
+    /// </summary>
+    public const string tabBackwards1 = "\x1b[Z";
 }

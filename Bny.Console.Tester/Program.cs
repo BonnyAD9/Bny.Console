@@ -1,5 +1,5 @@
 ﻿using Bny.Console;
 
-Term.Form("helo", Term.left, 2, Term.erase1);
-Term.Column = 1;
+Term.Read(prompt: "Enter number a: " + Term.brightYellow, next: Term.defaultFg + '\n');
+Term.Read(prompt: "Enter number b: " + Term.brightYellow, next: Term.defaultFg + '\n');
 Term.Read(max: 0);
