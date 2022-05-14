@@ -557,6 +557,48 @@ public partial class Term
     }
 
     /// <summary>
+    /// Returns true if the character should be ignored based on the parameters
+    /// </summary>
+    /// <param name="length">number of currently readed characters</param>
+    /// <param name="max">maximum number of characters to read</param>
+    /// <param name="cki">currently readed character</param>
+    /// <param name="allowEdit">indicates whether the user is allowed to edit the already typed text</param>
+    /// <returns>true if the character should be skiped</returns>
+    public static bool SkipPredicate(int length, int max, ConsoleKeyInfo cki, bool allowEdit)
+    {
+        bool readIgnored = IsReadIgnored(cki);
+        if (!allowEdit && readIgnored)
+            return true;
+
+        if (readIgnored)
+            return false;
+
+        return length >= max;
+    }
+
+
+    /// <summary>
+    /// Returns true if the character should be ignored based on the parameters
+    /// </summary>
+    /// <param name="length">number of currently readed characters</param>
+    /// <param name="max">maximum number of characters to read</param>
+    /// <param name="cki">currently readed character</param>
+    /// <param name="allowEdit">indicates whether the user is allowed to edit the already typed text</param>
+    /// <param name="predicate">returns true if the character should be skipped if it is not already ignored by read</param>
+    /// <returns>true if the character should be skiped</returns>
+    public static bool SkipPredicate(int length, int max, ConsoleKeyInfo cki, bool allowEdit, Func<bool> predicate)
+    {
+        bool readIgnored = IsReadIgnored(cki);
+        if (!allowEdit && readIgnored)
+            return true;
+
+        if (readIgnored)
+            return false;
+
+        return length >= max || predicate();
+    }
+
+    /// <summary>
     /// Read text from console
     /// </summary>
     /// <param name="stop">Key that will end the input</param>
@@ -585,7 +627,7 @@ public partial class Term
         int pos = 0,
         string prompt = "",
         string next = "\n") => Read(
-            (_, key, sb) => (key.Key != stop || sb.Length < min, (sb.Length >= max && !IsReadIgnored(key)) || (!allowEdit && IsReadIgnored(key))),
+            (_, key, sb) => (key.Key != stop || sb.Length < min, SkipPredicate(sb.Length, max, key, allowEdit)),
             map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos, prompt: prompt, next: next);
 
 
@@ -618,7 +660,7 @@ public partial class Term
         int pos = 0,
         string prompt = "",
         string next = "\n") => Read(
-            (_, key, sb) => (key.KeyChar != stop || sb.Length < min, (sb.Length >= max && !IsReadIgnored(key)) || (!allowEdit && IsReadIgnored(key))),
+            (_, key, sb) => (key.KeyChar != stop || sb.Length < min, SkipPredicate(sb.Length, max, key, allowEdit)),
             map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos, prompt: prompt, next: next);
 
     /// <summary>
@@ -630,6 +672,8 @@ public partial class Term
     /// <param name="edit">Default text that can be edited</param>
     /// <param name="allowEdit">Determines whether the already typed text can be edited</param>
     /// <param name="pos">Position of the cursor in the edit string</param>
+    /// <param name="prompt">String that will be printed before reading</param>
+    /// <param name="next">String that will be printed after reading</param>
     /// <returns>Readed string</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when pos is not in the range 0 - edit.Length</exception>
     /// <exception cref="InvalidOperationException">thrown when the terminal doesn't support getting the current cursor position</exception>
@@ -652,6 +696,163 @@ public partial class Term
         return Read(
             (_, cki, sb) => (sb.Length + 1 < count || IsReadIgnored(cki), !allowEdit && IsReadIgnored(cki)),
             map: map, intercept: intercept, readLast: true, edit: edit, pos: pos, prompt: prompt, next: next);
+    }
+
+    /// <summary>
+    /// Reads input from the console consisting only from the given chars, this uses the save command
+    /// </summary>
+    /// <param name="chars">Characters that are allowed to read</param>
+    /// <param name="predicate">Controls the reading,
+    /// First parameter is the index of the readed key,
+    /// Second parameter is the currently readed key,
+    /// Third parameter is what was readed so far,
+    /// Return value indicates whether to continue reading</param>
+    /// <param name="invert">Inverts the selection of characters</param>
+    /// <param name="map">Maps printed characters</param>
+    /// <param name="intercept">if true, nothing will be printed</param>
+    /// <param name="readLast">indicates whether the last key chould be added to the result string</param>
+    /// <param name="edit">this string will be printed and the user can edit it</param>
+    /// <param name="max">maximum characters to read</param>
+    /// <param name="allowEdit">whether to allow the user edit already typed text</param>
+    /// <param name="pos">position of the cursor in the edit string</param>
+    /// <param name="prompt">prompt for the user</param>
+    /// <param name="next">what will be written after the text has been readed</param>
+    /// <returns>string readed from the console</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when pos is not in the range 0 - edit.Length</exception>
+    /// <exception cref="InvalidOperationException">thrown when the terminal doesn't support getting the current cursor position</exception>
+    public static string Read(
+        string chars,
+        Func<int, ConsoleKeyInfo, StringBuilder, bool> predicate,
+        bool invert = false,
+        Func<char, char>? map = null,
+        bool intercept = false,
+        bool readLast = false,
+        string edit = "",
+        int max = int.MaxValue,
+        bool allowEdit = true,
+        int pos = 0,
+        string prompt = "",
+        string next = "\n") => invert
+        ? Read((i, cki, sb) => (predicate(i, cki, sb), SkipPredicate(sb.Length, max, cki, allowEdit, () => chars.Contains(cki.KeyChar))),
+            map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos, prompt: prompt, next: next)
+        : Read((i, cki, sb) => (predicate(i, cki, sb), SkipPredicate(sb.Length, max, cki, allowEdit, () => !chars.Contains(cki.KeyChar))),
+            map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos, prompt: prompt, next: next);
+
+    /// <summary>
+    /// Reads input from the console consisting only from the given chars, this uses the save command
+    /// </summary>
+    /// <param name="chars">Characters that are allowed to read</param>
+    /// <param name="stop">key that will end the reading</param>
+    /// <param name="invert">Inverts the selection of characters</param>
+    /// <param name="map">Maps printed characters</param>
+    /// <param name="intercept">if true, nothing will be printed</param>
+    /// <param name="readLast">indicates whether the last key chould be added to the result string</param>
+    /// <param name="edit">this string will be printed and the user can edit it</param>
+    /// <param name="max">maximum characters to read</param>
+    /// <param name="min">minimum number of characters to read</param>
+    /// <param name="allowEdit">whether to allow the user edit already typed text</param>
+    /// <param name="pos">position of the cursor in the edit string</param>
+    /// <param name="prompt">prompt for the user</param>
+    /// <param name="next">what will be written after the text has been readed</param>
+    /// <returns>string readed from the console</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when pos is not in the range 0 - edit.Length</exception>
+    /// <exception cref="InvalidOperationException">thrown when the terminal doesn't support getting the current cursor position</exception>
+    public static string Read(
+        string chars,
+        ConsoleKey stop = ConsoleKey.Enter,
+        bool invert = false,
+        Func<char, char>? map = null,
+        bool intercept = false,
+        bool readLast = false,
+        string edit = "",
+        int max = int.MaxValue,
+        int min = 0,
+        bool allowEdit = true,
+        int pos = 0,
+        string prompt = "",
+        string next = "\n") => invert
+        ? Read((i, cki, sb) => (cki.Key != stop || sb.Length < min, SkipPredicate(sb.Length, max, cki, allowEdit, () => chars.Contains(cki.KeyChar))),
+            map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos, prompt: prompt, next: next)
+        : Read((i, cki, sb) => (cki.Key != stop || sb.Length < min, SkipPredicate(sb.Length, max, cki, allowEdit, () => !chars.Contains(cki.KeyChar))),
+            map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos, prompt: prompt, next: next);
+
+    /// <summary>
+    /// Reads input from the console consisting only from the given chars until the given char, this uses the save command
+    /// </summary>
+    /// <param name="chars">Characters that are allowed to read</param>
+    /// <param name="stop">char that will end the reading</param>
+    /// <param name="invert">Inverts the selection of characters</param>
+    /// <param name="map">Maps printed characters</param>
+    /// <param name="intercept">if true, nothing will be printed</param>
+    /// <param name="readLast">indicates whether the last key chould be added to the result string</param>
+    /// <param name="edit">this string will be printed and the user can edit it</param>
+    /// <param name="max">maximum characters to read</param>
+    /// <param name="min">minimum number of characters to read</param>
+    /// <param name="allowEdit">whether to allow the user edit already typed text</param>
+    /// <param name="pos">position of the cursor in the edit string</param>
+    /// <param name="prompt">prompt for the user</param>
+    /// <param name="next">what will be written after the text has been readed</param>
+    /// <returns>string readed from the console</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when pos is not in the range 0 - edit.Length</exception>
+    /// <exception cref="InvalidOperationException">thrown when the terminal doesn't support getting the current cursor position</exception>
+    public static string Read(
+        string chars,
+        char stop,
+        bool invert = false,
+        Func<char, char>? map = null,
+        bool intercept = false,
+        bool readLast = false,
+        string edit = "",
+        int max = int.MaxValue,
+        int min = 0,
+        bool allowEdit = true,
+        int pos = 0,
+        string prompt = "",
+        string next = "\n") => invert
+        ? Read((i, cki, sb) => (cki.KeyChar != stop || sb.Length < min, SkipPredicate(sb.Length, max, cki, allowEdit, () => chars.Contains(cki.KeyChar))),
+            map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos, prompt: prompt, next: next)
+        : Read((i, cki, sb) => (cki.KeyChar != stop || sb.Length < min, SkipPredicate(sb.Length, max, cki, allowEdit, () => !chars.Contains(cki.KeyChar))),
+            map: map, intercept: intercept, readLast: readLast, edit: edit, pos: pos, prompt: prompt, next: next);
+
+    /// <summary>
+    /// Reads the given number of characters from the console
+    /// </summary>
+    /// <param name="chars">characters that are allowed to read</param>
+    /// <param name="count">Number of characters to read</param>
+    /// <param name="invert">inverts the selection of characters</param>
+    /// <param name="map">Maps the printed characters</param>
+    /// <param name="intercept">if true, no characters will be printed</param>
+    /// <param name="edit">Default text that can be edited</param>
+    /// <param name="allowEdit">Determines whether the already typed text can be edited</param>
+    /// <param name="pos">Position of the cursor in the edit string</param>
+    /// <param name="prompt">String that will be printed before reading</param>
+    /// <param name="next">String that will be printed after reading</param>
+    /// <returns>Readed string</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when pos is not in the range 0 - edit.Length</exception>
+    /// <exception cref="InvalidOperationException">thrown when the terminal doesn't support getting the current cursor position</exception>
+    public static string Read(
+        string chars,
+        int count,
+        bool invert = false,
+        Func<char, char>? map = null,
+        bool intercept = false,
+        string edit = "",
+        bool allowEdit = true,
+        int pos = 0,
+        string prompt = "",
+        string next = "\n")
+    {
+        if (count == 0)
+        {
+            Con.Write(edit);
+            return "";
+        }
+
+        return invert
+            ? Read((_, cki, sb) => (sb.Length + 1 < count || chars.Contains(cki.KeyChar) || IsReadIgnored(cki), (!allowEdit && IsReadIgnored(cki)) || chars.Contains(cki.KeyChar)),
+                map: map, intercept: intercept, readLast: true, edit: edit, pos: pos, prompt: prompt, next: next)
+            : Read((_, cki, sb) => (sb.Length + 1 < count || !chars.Contains(cki.KeyChar) || IsReadIgnored(cki), (!allowEdit && IsReadIgnored(cki)) || !chars.Contains(cki.KeyChar)),
+                map: map, intercept: intercept, readLast: true, edit: edit, pos: pos, prompt: prompt, next: next);
     }
 
     /// <summary>
