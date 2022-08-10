@@ -6,6 +6,9 @@ namespace Bny.Console;
 
 public partial class Term
 {
+    /// <summary>
+    /// axpected maximum size of terminal window in characters
+    /// </summary>
     public const int maxSize = 999999;
 
     /// <summary>

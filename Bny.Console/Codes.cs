@@ -1,5 +1,8 @@
 ﻿namespace Bny.Console;
 
+/// <summary>
+/// Static class for woking with ANSI escape codes
+/// </summary>
 public partial class Term
 {
     //===// Single char codes
@@ -473,6 +476,9 @@ public partial class Term
     public const string disableCursorKeysApplication = "\x1b[?1l";
 
     //===// Query state
+    /// <summary>
+    /// Request terminal identity
+    /// </summary>
     public const string reqTerminalIdentity = "\x1b[0c";
 
     //===// Tabs
@@ -504,10 +510,19 @@ public partial class Term
     public const string scrollingMargin = "\x1b[{0};{1}r";
 
     //===// Window width
+    /// <summary>
+    /// 
+    /// </summary>
     public const string width132 = "\x1b[?3h";
+    /// <summary>
+    /// 
+    /// </summary>
     public const string width80 = "\x1b[?3l";
 
     //===// Reset
+    /// <summary>
+    /// 
+    /// </summary>
     public const string softReset = "\x1b[!p";
 
     //===// OSC
