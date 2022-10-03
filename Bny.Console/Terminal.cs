@@ -298,8 +298,8 @@ public partial class Term
     {
         Con.Write(posReq);
 
-        if (!Con.KeyAvailable)
-            throw new InvalidOperationException();
+        while (!Con.KeyAvailable)
+            ;//throw new InvalidOperationException();
 
         var str = ReadRaw(true).AsSpan();
         int i = str.IndexOf('\x1b');
@@ -313,12 +313,12 @@ public partial class Term
         if (i == -1)
             throw new InvalidOperationException();
 
-        str = str[2..i];
+        str = str[1] == '[' ? str[2..i] : str[1..i];
         i = str.IndexOf(';');
 
         if (i == -1)
             throw new InvalidOperationException();
-
+        
         return (int.Parse(str[(i + 1)..]), int.Parse(str[..i]));
     }
 
